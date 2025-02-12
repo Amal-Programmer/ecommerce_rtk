@@ -1,7 +1,14 @@
 import React from 'react';
 import './ProductList.css'; 
+import { useState } from 'react';
+import {useDispatch } from 'react-redux';
+import { addItemToCart } from './CartSlice';
 
 const ProductList = () => {
+  
+  const dispatch = useDispatch();
+  const [disabledProducts, setDisabledProducts] =useState([]);
+  
 
   const products = [
     { id: 1, name: 'Product A', price: 60 },
@@ -9,10 +16,31 @@ const ProductList = () => {
     { id: 3, name: 'Product C', price: 30 },
   ];
 
+  const handleAddToCart =(product) =>{
+    dispatch(addItemToCart(product));
+    setDisabledProducts([...disabledProducts, product.id]);
+
+  }
+
+
+
   return (
     <div className="product-list">
       <h2 className="product-list-title">Products</h2>
       <ul className="product-list-items">
+        {products.map(product=>(
+        <li className='product-list-item' key={product.id}> 
+              <span> {product.name} - ${product.price} </span>
+              {/*disables the button if the product is in the disabledProducts array or if the product is added.
+                 This functionality prevents adding duplicate items to the cart and provides visual feedback by styling the button as disabled when necessary. */}
+              <button 
+                  className={`add-to-cart-btn  ${disabledProducts.includes(product.id)? 'disabled':''}`}
+                  onClick={()=>handleAddToCart(product)}> 
+                   Add to cart
+              </button>
+        </li>
+
+        ))}
      
       </ul>
     </div>
